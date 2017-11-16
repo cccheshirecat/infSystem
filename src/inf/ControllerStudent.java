@@ -83,12 +83,11 @@ public class ControllerStudent {
     public void createCourse(String name, String sname){
 
     }
-
     public void createValue(String name, String sname){
 
     }
     public void addrating(String name, String sname){
-        
+
     }
     public void setStudent() {
         System.out.println("Введите\n1 - l для изменения имени студента\n2 - для изменения фамилии\n3 - для изменения возраста\n" +
@@ -104,7 +103,10 @@ public class ControllerStudent {
         switch (cases){
             case 1: createName(name, sname);
             case 2: createSname(name,sname);
-            case 3:
+            case 3: createAge(name,sname);
+            case 4: createCourse(name, sname);
+            case 5: createValue(name, sname);
+            case 6: addrating(name,sname);
         }
     }
 
