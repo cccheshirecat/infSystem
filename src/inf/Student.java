@@ -1,24 +1,29 @@
 package inf;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class Student implements Serializable {
     private String name;
     private String sname;
     private int age;
-    public int course;
-    private HashMap<String,String> rating=new HashMap();
+    private int course;
+    private HashMap<String,Integer> rating=new HashMap();
     public Student(String name, String sname, int age, int course){
         this.age=age;
         this.name=name;
         this.sname=sname;
+        rating=new HashMap<String,Integer>()
+        rating.put(null,null);
     }
-    public void setSubjectRating(String subject, String rating){
-        this.rating.put(subject,rating);
+    public Integer getMark(String s)
+    {
+        if(registers.containsKey(s))return    registers.get(s);
+        else return null;
     }
-
     public String getName() {
         return name;
     }
@@ -29,9 +34,6 @@ public class Student implements Serializable {
 
     public String getSname() {
         return sname;
-    }
-    public String getRating(String subject){
-        return  rating.get(subject);
     }
     public void setName(String name){
         this.name=name;
@@ -48,20 +50,20 @@ public class Student implements Serializable {
         this.course = course;
     }
 
-    public void setRating(HashMap<String, String> rating) {
+    public void setRating(HashMap<String, Integer> rating) {
         this.rating = rating;
     }
 
-    public HashMap<String, String> getRating() {
+    public HashMap<String, Integer> getRating() {
         return rating;
     }
 
     public int getCourse() {
         return course;
     }
-    public void addRaiting(String subject, String value){
+    public void addRaiting(String subject, Integer value){
         rating.put(subject,value);
-    }
+    }//он же и Set
 
     @Override
     public String toString() {
@@ -72,5 +74,16 @@ public class Student implements Serializable {
           sb.append(rating.toString());
       }
       return sb.toString();
+    }
+
+    public Set<String> getSubjects() {
+        return rating.keySet();
+    }
+    public Collection<Integer> getMarks() {
+        return registers.values();
+    }
+    public int getSize()
+    {
+        return rating.size();
     }
 }
