@@ -9,29 +9,12 @@ public class ControllerStudent {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
 
-    public ControllerStudent(FileInputStream fis, FileOutputStream fos) throws IOException {
-        this.fis = fis;
-        ois = new ObjectInputStream(fis);
-        this.fos = fos;
-        oos = new ObjectOutputStream(fos);
+    public ControllerStudent() throws IOException {
+        fis =new FileInputStream("out.txt");
+        fos=new FileOutputStream("out.txt");
+        ois=new ObjectInputStream(fis);
+        oos=new ObjectOutputStream(fos);
     }
-
-    public void menu() throws IOException, ClassNotFoundException {
-        System.out.println("Введите:\n 1 - если хотите получить данные студента по его имени и фамилии\n" +
-                "2 - если хотите добваить нового студента \n" +
-                "3 - если хотите изменить данные студента по его имени и фамилии\n");
-        Scanner scanner = new Scanner(System.in);
-        int cases = scanner.nextInt();
-        switch (cases) {
-            case 1:
-                getStudent();
-            case 2:
-                addStudent();
-            case 3:
-                setStudent();
-        }
-    }
-
     public void getStudent() throws IOException, ClassNotFoundException {
         Student student;
         System.out.println("Введите имя студента");
@@ -61,13 +44,13 @@ public class ControllerStudent {
         System.out.print("Рейтинг студента\nВведите количество изучаемых преметов:\n");
         int count = scanner.nextInt();
         String subject;
-        String value;
+        int mark;
         for (int i = 0; i < count; i++) {
             System.out.println("Введите название предмета: ");
             subject = scanner.nextLine();
             System.out.println("\nВведите оценку(отл, хор, уд, неуд): ");
-            value = scanner.nextLine();
-            student.addRaiting(subject, value);
+            mark = scanner.nextInt();
+            student.addRating(subject, mark);
         }
         oos.writeObject(student);
     }
@@ -86,7 +69,7 @@ public class ControllerStudent {
     public void createValue(String name, String sname){
 
     }
-    public void addrating(String name, String sname){
+    public void addRating(String name, String sname){
 
     }
     public void setStudent() {
@@ -106,8 +89,27 @@ public class ControllerStudent {
             case 3: createAge(name,sname);
             case 4: createCourse(name, sname);
             case 5: createValue(name, sname);
-            case 6: addrating(name,sname);
+            case 6: addRating(name,sname);
         }
     }
 
 }
+
+
+  /* public void menu() throws IOException, ClassNotFoundException {
+        System.out.println("Введите:\n 1 - если хотите получить данные студента по его имени и фамилии\n" +
+                "2 - если хотите добваить нового студента \n" +
+                "3 - если хотите изменить данные студента по его имени и фамилии\n");
+        Scanner scanner = new Scanner(System.in);
+        int cases = scanner.nextInt();
+        switch (cases) {
+            case 1:
+                getStudent();
+            case 2:
+                addStudent();
+            case 3:
+                setStudent();
+            default:
+                System.out.println("Число задано неверно");
+        }
+    }*/
