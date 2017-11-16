@@ -2,6 +2,7 @@ package inf;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Student implements Serializable {
     private String name;
@@ -57,5 +58,19 @@ public class Student implements Serializable {
 
     public int getCourse() {
         return course;
+    }
+    public void addRaiting(String subject, String value){
+        rating.put(subject,value);
+    }
+
+    @Override
+    public String toString() {
+        StringBuffer sb=new StringBuffer("name= "+name+" second name= "+sname+" age= "+age+" course= "+course);
+        Iterator iterator=rating.values().iterator();
+        sb.append("name= "+name+" second name= "+sname+" age= "+age+" course= "+course+" rating: ");
+      while (iterator.hasNext()){
+          sb.append(rating.toString());
+      }
+      return sb.toString();
     }
 }
