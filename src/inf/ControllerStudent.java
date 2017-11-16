@@ -4,33 +4,38 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ControllerStudent {
-    private FileInputStream fis;
+
     private FileOutputStream fos;
     private ObjectOutputStream oos;
+    private FileInputStream fis;
     private ObjectInputStream ois;
 
     public ControllerStudent() throws IOException {
-        fis =new FileInputStream("out.txt");
-        fos=new FileOutputStream("out.txt");
-        ois=new ObjectInputStream(fis);
-        oos=new ObjectOutputStream(fos);
+
+
+
     }
     public void getStudent() throws IOException, ClassNotFoundException {
+        fis =new FileInputStream("out.txt");
+        ois=new ObjectInputStream(fis);
         Student student;
         System.out.println("Введите имя студента");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
         System.out.println("Введите фамилию студента");
         String sname = scanner.nextLine();
-        while (fis.available() > 0) {
+        int f=fis.available();
+        while (fis.available()>0) {
             student = (Student) ois.readObject();
             if (student.getName().equals(name) && student.getSname().equals(sname)) {
                 System.out.println(student.toString());
             }
         }
     }
-
     public void addStudent() throws IOException {
+        fos=new FileOutputStream("out.txt");
+        DataOutputStream sdos=new DataOutputStream(fos);
+        oos=new ObjectOutputStream(sdos);
         System.out.println("Введите имя студента");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
@@ -45,14 +50,19 @@ public class ControllerStudent {
         int count = scanner.nextInt();
         String subject;
         int mark;
+        Scanner scanner1=new Scanner(System.in);
         for (int i = 0; i < count; i++) {
-            System.out.println("Введите название предмета: ");
-            subject = scanner.nextLine();
-            System.out.println("\nВведите оценку(отл, хор, уд, неуд): ");
-            mark = scanner.nextInt();
+            System.out.println("Введите название предмета:");
+            subject = scanner1.nextLine();
+            System.out.println("Введите оценку: ");
+            mark = scanner1.nextInt();
             student.addRating(subject, mark);
         }
         oos.writeObject(student);
+        oos.flush();
+        oos.close();
+        fos.flush();
+        fos.close();
     }
     public void createName(String name, String sname){
 
