@@ -11,13 +11,14 @@ public class Student implements Serializable {
     private String sname;
     private int age;
     private int course;
-    private HashMap<String,Integer> rating=new HashMap();
+    private HashMap<String,Integer> rating;
     public Student(String name, String sname, int age, int course){
         this.age=age;
         this.name=name;
         this.sname=sname;
         rating=new HashMap<String,Integer>();
         rating.put(null,null);
+        this.course=course;
     }
     public Integer getMark(String s)
     {
@@ -61,7 +62,7 @@ public class Student implements Serializable {
     public int getCourse() {
         return course;
     }
-    public void addRaiting(String subject, Integer value){
+    public void addRating(String subject, Integer value){
         rating.put(subject,value);
     }//он же и Set
 
@@ -136,7 +137,7 @@ public class Student implements Serializable {
     public HashMap<String, String> getRating() {
         return rating;
     }
-    public void addRaiting(String subject, String value){
+    public void addRating(String subject, String value){
         rating.put(subject,value);
     }
     public void setCourse(int course) {
