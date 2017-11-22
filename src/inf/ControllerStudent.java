@@ -24,8 +24,8 @@ public class ControllerStudent {
         String name = scanner.nextLine();
         System.out.println("Введите фамилию студента");
         String sname = scanner.nextLine();
-        int f=fis.available();
-        while (fis.available()>0) {
+
+        while (fis.available()>0) {        int f=fis.available();
             student = (Student) ois.readObject();
             if (student.getName().equals(name) && student.getSname().equals(sname)) {
                 System.out.println(student.toString());
@@ -51,12 +51,22 @@ public class ControllerStudent {
         String subject;
         int mark;
         Scanner scanner1=new Scanner(System.in);
-        for (int i = 0; i < count; i++) {
+        /*while(scanner1.hasNextLine()) {
             System.out.println("Введите название предмета:");
             subject = scanner1.nextLine();
             System.out.println("Введите оценку: ");
             mark = scanner1.nextInt();
             student.addRating(subject, mark);
+        }*/
+        for (int i = 0; i < count; i++) {
+            System.out.println("Введите название предмета:");
+            while (scanner1.hasNext()) {
+                subject = scanner1.nextLine();
+                System.out.println("qВведите оценку: ");
+                mark = scanner1.nextInt();
+                student.addRating(subject, mark);
+                break;
+            }
         }
         oos.writeObject(student);
         oos.flush();
