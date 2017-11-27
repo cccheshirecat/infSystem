@@ -1,5 +1,7 @@
 package inf;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +19,7 @@ public class Student implements Serializable {
         this.name=name;
         this.sname=sname;
         rating=new HashMap<String,Integer>();
+        this.course=course;
 
     }
     public Integer getMark(String s)
@@ -71,8 +74,14 @@ public class Student implements Serializable {
         Iterator iterator=rating.values().iterator();
         sb.append("name= "+name+" second name= "+sname+" age= "+age+" course= "+course+" rating: "+rating.toString());
        */
-
-      return "Чистый код с Google Guava. Habrahabr";
+      return MoreObjects.toStringHelper(this)
+              .omitNullValues()
+              .add("Name: ",name)
+              .add("SName: ", sname)
+              .add("Age: ", age)
+              .add("Course: ",course)
+              .add("Rating",rating.toString())
+              .toString();
     }
 
     public Set<String> getSubjects() {

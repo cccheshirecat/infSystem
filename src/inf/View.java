@@ -8,16 +8,18 @@ public class View {
         ControllerStudent controllerStudent=new ControllerStudent();
         ControllerGroup controllerGroup=new ControllerGroup();
         Scanner scanner=new Scanner(System.in);
-        int cases=scanner.nextInt();
-        while(true) {
+        int cases;
+        while(true){
             System.out.println("Введите: \n1 - для работы с информацией о студентах\n2 - для работы с информацией о группах" +
                     "\n3 - для выхода");
+            cases=scanner.nextInt();
             switch (cases) {
                 case 1: {
                     System.out.println("Введите:\n1 - если хотите получить данные студента по его имени и фамилии\n" +
                             "2 - если хотите добваить нового студента \n" +
                             "3 - если хотите изменить данные студента по его имени и фамилии" +
-                            "\n4 - для выхода из программы");
+                            "\n4 - если хотите получить данные всех студентов" +
+                            "\n5 - для выхода из программы");
                     cases = scanner.nextInt();
                     switch (cases) {
                         case 1:
@@ -29,14 +31,17 @@ public class View {
                         case 3:
                             controllerStudent.setStudent();
                             break;
-                        case 4: System.exit(0);
+                        case 4:break;
+                        case 5: System.exit(0);
                         default:
                             System.out.println("Число задано неверно");
                             break;
                     }
+                break;
                 }
                 case 2:
                     controllerGroup.menu();
+                    break;
                 case 3:
                     System.exit(0);
             }
