@@ -27,6 +27,9 @@ public class Student implements Serializable {
         if(rating.containsKey(s))return    rating.get(s);
         else return null;
     }
+    public void setMark(String s, int mark){
+        rating.replace(s, mark);
+    }
     public String getName() {
         return name;
     }
@@ -90,6 +93,7 @@ public class Student implements Serializable {
     public Collection<Integer> getMarks() {
         return rating.values();
     }
+
     public int getSize()
     {
         return rating.size();
