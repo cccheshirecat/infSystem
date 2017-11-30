@@ -1,5 +1,7 @@
 package inf;
 
+import com.google.common.base.MoreObjects;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -58,5 +60,18 @@ public class Group implements Serializable {
     }
     public int studentsNum(){
         return students.size();
+    }
+    @Override
+    public String toString() {
+      /*  StringBuffer sb=new StringBuffer("name= "+name+" second name= "+sname+" age= "+age+" course= "+course);
+        Iterator iterator=rating.values().iterator();
+        sb.append("name= "+name+" second name= "+sname+" age= "+age+" course= "+course+" rating: "+rating.toString());
+       */
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("Name: ",name)
+                .add("Leader: ", leader.toString())
+                .add("Students: ",students.toString())
+                .toString();
     }
 }

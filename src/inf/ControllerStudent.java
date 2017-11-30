@@ -67,8 +67,7 @@ public class ControllerStudent {
     //запись студента
     private void writeStudents(ArrayList<Student> students) throws IOException, ClassNotFoundException {
         fos = new FileOutputStream("out.txt");
-        DataOutputStream sdos = new DataOutputStream(fos);
-        oos = new ObjectOutputStream(sdos);
+        oos = new ObjectOutputStream(fos);
         if (students != null) {
             Iterator<Student> iterator = students.iterator();
             while (iterator.hasNext()) {
