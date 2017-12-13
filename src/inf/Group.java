@@ -1,9 +1,7 @@
 package inf;
-
-import com.google.common.base.MoreObjects;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Group implements Serializable {
     private String name;
@@ -13,6 +11,7 @@ public class Group implements Serializable {
         this.name=name;
         this.students=students;
         this.leader=leader;
+        students.add(leader);
     }
 
     public String getName() {
@@ -28,7 +27,9 @@ public class Group implements Serializable {
     }
 
     public void setLeader(Student leader) {
+        students.remove(leader);
         this.leader = leader;
+        students.add(leader);
     }
 
     public void setName(String name) {
@@ -55,23 +56,39 @@ public class Group implements Serializable {
             count++;
         }
     }
+    public int getStudentNum(){
+       return students.size();
+    }
     public void addStudent(Student student){
         students.add(student);
     }
-    public int studentsNum(){
-        return students.size();
-    }
     @Override
     public String toString() {
-      /*  StringBuffer sb=new StringBuffer("name= "+name+" second name= "+sname+" age= "+age+" course= "+course);
-        Iterator iterator=rating.values().iterator();
-        sb.append("name= "+name+" second name= "+sname+" age= "+age+" course= "+course+" rating: "+rating.toString());
-       */
-        return MoreObjects.toStringHelper(this)
-                .omitNullValues()
-                .add("Name: ",name)
-                .add("Leader: ", leader.toString())
-                .add("Students: ",students.toString())
-                .toString();
+        StringBuffer sb=new StringBuffer("name Group= "+name+" ");
+        for (Student student :
+                students) {
+            sb.append(student.toString()+" ");
+        }
+      return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        int num=0;
+        Group group=(Group) obj;
+        if (name.equals(group.name)){
+            if (leader.equals(group.leader)){
+                if (students.size()==group.getStudentNum()){
+                    for (int i = 0; i < students.size(); i++) {
+                        if (students.get(i).equals(group.students.get(i))){
+                            num++;
+                        }
+                    }
+                    if (num==students.size()){
+                        return true;
+                    } else return false;
+                } else  return false;
+            } else return false;
+        } else return false;
     }
 }

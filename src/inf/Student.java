@@ -98,6 +98,22 @@ public class Student implements Serializable {
     {
         return rating.size();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Student student=(Student)obj;
+        if (name.equals(student.getName())){
+            if (sname.equals(student.getSname())){
+                if (age==student.getAge()){
+                    if (course==student.getCourse()){
+                        if (rating.equals(student.rating))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 
 

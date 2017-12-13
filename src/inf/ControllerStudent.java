@@ -16,8 +16,8 @@ public class ControllerStudent {
 
     //проверка на пустоту файла
     public boolean isEmpty() throws IOException {
-        fis = new FileInputStream("out.txt");
-        if (fis.read() == 0) {
+        fis = new FileInputStream("src/students.txt");
+        if (fis.available()==0) {
             fis.close();
             return true;
         } else return false;
@@ -29,32 +29,27 @@ public class ControllerStudent {
             System.out.println("Ошибка! Файл пуст. Занесисе сначала данные");
             addStudent();
         } else {
-            fis = new FileInputStream("out.txt");
-            ois = new ObjectInputStream(fis);
-            Student student;
             System.out.println("Введите имя студента");
             Scanner scanner = new Scanner(System.in);
             String name = scanner.nextLine();
             System.out.println("Введите фамилию студента");
             String sname = scanner.nextLine();
-            while (fis.available() > 0) {
-                student = (Student) ois.readObject();
+            ArrayList<Student> students = getStudents();
+            for (Student student :
+                    students) {
                 if (student.getName().equals(name) && student.getSname().equals(sname)) {
                     System.out.println(student.toString());
                 }
             }
-            ois.close();
-            fis.close();
         }
     }
 
     //получение всех студентов
     public ArrayList<Student> getStudents() throws IOException, ClassNotFoundException {
         if (!isEmpty()) {
-            fis = new FileInputStream("out.txt");
+            fis = new FileInputStream("src/students.txt");
             ois = new ObjectInputStream(fis);
             ArrayList<Student> students = new ArrayList<>();
-
             while (fis.available() > 0) {
                 students.add((Student) ois.readObject());
             }
@@ -63,10 +58,19 @@ public class ControllerStudent {
             return students;
         } else return null;
     }
-
+    private void findDuplicateStudent() throws IOException, ClassNotFoundException {
+        ArrayList<Student> students=getStudents();
+        for (int i = 0; i < students.size(); i++) {
+            for (int j = i+1; j < students.size(); j++) {
+                if (students.get(i).equals(students.get(j)))
+                    students.remove(j);
+            }
+        }
+        writeStudents(students);
+    }
     //запись студента
-    private void writeStudents(ArrayList<Student> students) throws IOException, ClassNotFoundException {
-        fos = new FileOutputStream("out.txt");
+    public void writeStudents(ArrayList<Student> students) throws IOException, ClassNotFoundException {
+        fos = new FileOutputStream("src/students.txt");
         oos = new ObjectOutputStream(fos);
         if (students != null) {
             Iterator<Student> iterator = students.iterator();
@@ -75,6 +79,8 @@ public class ControllerStudent {
             }
         }
         oos.flush();
+        oos.close();
+        fos.close();
     }
 
     //добавление нового студента
@@ -86,6 +92,7 @@ public class ControllerStudent {
         String sname = scanner.nextLine();
         System.out.println("Введите возраст студента");
         int age = scanner.nextInt();
+
         System.out.println("Введите курс студента");
         int coursw = scanner.nextInt();
         Student student = new Student(name, sname, age, coursw);
@@ -100,10 +107,12 @@ public class ControllerStudent {
             System.out.println("Введите оценку: ");
             mark = scanner1.nextInt();
             student.addRating(subject, mark);
+            System.out.println("Студент добавлен");
         }
         ArrayList<Student> students = getStudents();
         students.add(student);
         writeStudents(students);
+        findDuplicateStudent();
     }
 
     //получение индекса студента  по имени и фамилии
@@ -135,6 +144,7 @@ public class ControllerStudent {
         student.setName(newName);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Имя студента изменено");
     }
 
     //фамилии
@@ -148,6 +158,7 @@ public class ControllerStudent {
         student.setSname(newSname);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Фамилия студента изменена");
     }
 
     //возраста
@@ -161,6 +172,7 @@ public class ControllerStudent {
         student.setAge(newAge);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Возраст студента изменен");
     }
 
     //курса
@@ -174,6 +186,7 @@ public class ControllerStudent {
         student.setCourse(newAge);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Курс студента изменен");
     }
 
     //оценкаи по опред предмету
@@ -189,6 +202,7 @@ public class ControllerStudent {
         student.setMark(nameL, newMark);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Оценка по предмету изменена");
     }
 
     //добавление нового предмета
@@ -204,6 +218,7 @@ public class ControllerStudent {
         student.addRating(nameL, newMark);
         students.set(index, student);
         writeStudents(students);
+        System.out.println("Новый предмет добавлен");
     }
 
     //изменение студента по имени и фамилии
@@ -221,33 +236,21 @@ public class ControllerStudent {
         switch (cases) {
             case 1:
                 createName(name, sname);
-                oos.close();
-                fos.close();
                 break;
             case 2:
                 createSname(name, sname);
-                oos.close();
-                fos.close();
                 break;
             case 3:
                 createAge(name, sname);
-                oos.close();
-                fos.close();
                 break;
             case 4:
                 createCourse(name, sname);
-                oos.close();
-                fos.close();
                 break;
             case 5:
                 createMark(name, sname);
-                oos.close();
-                fos.close();
                 break;
             case 6:
                 addRating(name, sname);
-                oos.close();
-                fos.close();
                 break;
         }
     }
@@ -258,7 +261,7 @@ public class ControllerStudent {
             System.out.println("Ошибка! Файл пуст. Занесисе сначала данные");
             addStudent();
         } else {
-            fis = new FileInputStream("out.txt");
+            fis = new FileInputStream("src/students.txt");
             ois = new ObjectInputStream(fis);
             Student student;
             while (fis.available() > 0) {

@@ -15,116 +15,193 @@ public class ControllerGroup {
 
     //проверка на пустоту файла
     public boolean isEmpty() throws IOException {
-        fis = new FileInputStream("groups.txt");
-        if (fis.read() == 0) {
+        fis = new FileInputStream("src/groups.txt");
+        if (fis.available()==0) {
             fis.close();
             return true;
         } else return false;
     }
+
     //получение всех групп из файла
     private ArrayList<Group> getGroups() throws IOException, ClassNotFoundException {
         if (!isEmpty()) {
-            fis = new FileInputStream("groups.txt");
+            fis = new FileInputStream("src/groups.txt");
             ois = new ObjectInputStream(fis);
             ArrayList<Group> groups = new ArrayList<>();
             while (fis.available() > 0) {
                 groups.add((Group) ois.readObject());
             }
+            ois.close();
+            fis.close();
             return groups;
         } else return null;
     }
+
     //вывод студентов группы
     private void outStudent(Group group) throws IOException {
         fis = new FileInputStream("groups.txt");
         ois = new ObjectInputStream(fis);
         ArrayList<Student> students = group.getStudents();
+        Student leader = group.getLeader();
         int i = 1;
         for (Student student :
                 students) {
             System.out.println("" + i + " - " + student.toString());
         }
     }
-    //получение студентов группы
-    public void getGroupStudents() throws IOException, ClassNotFoundException {
-        System.out.println("Введите имя группы: ");
-        Scanner scanner = new Scanner(System.in);
-        String nameG = scanner.next();
-        ArrayList<Group> groups = getGroups();
-        if (groups != null) {
-            for (Group group :
-                    groups) {
-                if (group.getName().equals(nameG)) {
-                    outStudent(group);
-                } else {
-                    System.out.println("Группа не найдена!");
-                    menu();
-            }
-        }
-    }else {
-            System.out.println("ОШИБКА!!! Записи о группах отсутствуют!");
-            menu();
-        }
 
-}
-private Group addStudent(Group group){
+    private Group findGroup(String name) {
+        try {
 
-}
-//добавление студента в группу
-    public void addStudent() throws IOException, ClassNotFoundException {
-        System.out.println("Введите имя группы: ");
-        Scanner scanner = new Scanner(System.in);
-        String nameG = scanner.next();
-        int i=0;
-        int c=0;
-        ArrayList<Group> groups = getGroups();
-        if (groups != null) {
-            for (Group group :
-                    groups) {
-                if (group.getName().equals(nameG)) {
-                    group.
-                    c++;
+            ArrayList<Group> groups = getGroups();
+            if (groups != null) {
+                for (Group group :
+                        groups) {
+                    if (group.getName().equals(name)) {
+                        return group;
+                    }
                 }
-                i++;
+            } else {
+                System.out.println("ОШИБКА!!! Записи о группах отсутствуют!");
+                menu();
             }
-        }else {
-            System.out.println("ОШИБКА!!! Записи о группах отсутствуют!");
-            menu();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        if (c==1){
-            System.out.println("Группа не найдена");
-        }
-
+        return null;
     }
 
+    private Student getStudentForWtite() {
+        String nameStudent;
+        Scanner scanner = new Scanner(System.in);
+        String snameStudent;
+        int ageStudent;
+        int courseS;
+        int subjects;
+        String subjectName;
+        System.out.println("Введите имя студента");
+        nameStudent = scanner.next();
+        System.out.println("Введите фамилию студента");
+        snameStudent = scanner.next();
+        System.out.println("Введите возраст студента");
+        ageStudent = scanner.nextInt();
+        System.out.println("Введите курс студента");
+        courseS = scanner.nextInt();
+        Student student = new Student(nameStudent, snameStudent, ageStudent, courseS);
+        System.out.print("Рейтинг студента\nВведите количество изучаемых преметов:\n");
+        subjects = scanner.nextInt();
+        int mark;
+        for (int k = 0; k < subjects; k++) {
+            System.out.println("Введите название предмета:");
+            subjectName = scanner.next();
+            System.out.println("Введите оценку: ");
+            mark = scanner.nextInt();
+            student.addRating(subjectName, mark);
+        }
+        return student;
+    }
 
     private void writeGroup(ArrayList<Group> groups) throws IOException, ClassNotFoundException {
-        fos = new FileOutputStream("groups.txt");
+        fos = new FileOutputStream("src/groups.txt");
         oos = new ObjectOutputStream(fos);
         for (Group group :
                 groups) {
             oos.writeObject(group);
             oos.flush();
         }
+        oos.close();
+        fos.close();
     }
+
+    private void findDuplicateStudent() throws IOException, ClassNotFoundException {
+        ArrayList<Group> groups = getGroups();
+        ArrayList<Student> students;
+        Student tempStudent;
+        for (Group group : groups
+                ) {
+            students = group.getStudents();
+            for (int i = 0; i < students.size(); i++) {
+                tempStudent = students.get(i);
+                for (int j = i + 1; j < students.size(); j++) {
+                    if (tempStudent.equals(students.get(j))) {
+                        students.remove(j);
+                    }
+                }
+            }
+        }
+        writeGroup(groups);
+    }
+
+    private void findDuplicateGroup() {
+        try {
+            ArrayList<Group> groups = getGroups();
+            for (int i = 0; i < groups.size(); i++) {
+                for (int j = i + 1; j < groups.size(); j++) {
+                    if (groups.get(i).equals(groups.get(j)))
+                        groups.remove(j);
+                }
+            }
+            writeGroup(groups);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //получение студентов группы
+    public void getGroupStudents() throws IOException, ClassNotFoundException {
+        System.out.println("Введите имя группы: ");
+        Scanner scanner = new Scanner(System.in);
+        String nameG = scanner.next();
+        Group group = findGroup(nameG);
+        if (group != null) {
+            outStudent(group);
+        } else {
+            System.out.println("Группа не найдена!");
+            menu();
+        }
+    }
+
+    //добавление студента в группу
+    public void addStudent() throws IOException, ClassNotFoundException {
+        System.out.println("Введите имя группы: ");
+        Scanner scanner = new Scanner(System.in);
+        String nameG = scanner.next();
+        int c = 0;
+        ArrayList<Group> groups = getGroups();
+        if (groups != null) {
+            for (Group group :
+                    groups) {
+                if (group.getName().equals(nameG)) {
+                    group.addStudent(getStudentForWtite());
+                    c++;
+                    System.out.println("Студент добавлен");
+                }
+            }
+        } else {
+            System.out.println("ОШИБКА!!! Записи о группах отсутствуют!");
+            menu();
+        }
+        if (c != 1) {
+            System.out.println("Группа не найдена");
+        } else
+            writeGroup(groups);
+        findDuplicateStudent();
+        findDuplicateGroup();
+    }
+
     public void addGroup() throws IOException, ClassNotFoundException {
-        ArrayList<Group> groups=getGroups();
+        ArrayList<Group> groups = getGroups();
         System.out.println("Сколько групп вы хотите добавить:");
         Scanner scanner = new Scanner(System.in);
         int count = scanner.nextInt();
         String gropuName;
         ArrayList<Student> students;
         int studentNum;
-        String nameStudent;
-        String snameStudent;
-        int ageStudent;
-        int courseS;
-        int subjects;
         Group group;
-        String leaderName;
-        String leaderSname;
-        int lesderAge;
-        int lederCourse;
-        String subjectName;
         Student leader;
         for (int i = 0; i < count; i++) {
             System.out.println("Введите имя группы:");
@@ -133,52 +210,196 @@ private Group addStudent(Group group){
             studentNum = scanner.nextInt();
             students = new ArrayList<>(studentNum);
             for (int j = 0; j < studentNum; j++) {
-                System.out.println("Введите имя студента");
-                nameStudent = scanner.next();
-                System.out.println("Введите фамилию студента");
-                snameStudent = scanner.next();
-                System.out.println("Введите возраст студента");
-                ageStudent = scanner.nextInt();
-                System.out.println("Введите курс студента");
-                courseS = scanner.nextInt();
-                Student student = new Student(nameStudent, snameStudent, ageStudent, courseS);
-                System.out.print("Рейтинг студента\nВведите количество изучаемых преметов:\n");
-                subjects = scanner.nextInt();
-
-                int mark;
-                for (int k = 0; k < subjects; k++) {
-                    System.out.println("Введите название предмета:");
-                    subjectName = scanner.next();
-                    System.out.println("Введите оценку: ");
-                    mark = scanner.nextInt();
-                    student.addRating(subjectName, mark);
-                }
-                students.add(student);
+                students.add(getStudentForWtite());
             }
-            System.out.println("Введите имя старосты");
-            leaderName = scanner.next();
-            System.out.println("Введите фамилию старосты");
-            leaderSname = scanner.next();
-            System.out.println("Введите возраст старосты");
-            lesderAge = scanner.nextInt();
-            System.out.println("Введите курс старосты");
-            lederCourse = scanner.nextInt();
-            leader = new Student(leaderName, leaderSname, lesderAge, lederCourse);
-            System.out.print("Рейтинг студента\nВведите количество изучаемых преметов старостой:\n");
-            subjects = scanner.nextInt();
-            int mark;
-            for (int k = 0; k < subjects; k++) {
-                System.out.println("Введите название предмета:");
-                subjectName = scanner.next();
-                System.out.println("Введите оценку: ");
-                mark = scanner.nextInt();
-                leader.addRating(subjectName, mark);
-            }
+            System.out.printf("Староста:");
+            leader = getStudentForWtite();
             students.add(leader);
             group = new Group(gropuName, students, leader);
-            groups.add(group);
+            if (groups != null) {
+                groups.add(group);
+                System.out.println("Группа добавлена");
+            } else {
+                groups = new ArrayList<>();
+                groups.add(group);
+                System.out.println("Группа добавлена");
+            }
         }
         writeGroup(groups);
+        findDuplicateStudent();
+        findDuplicateGroup();
+    }
+
+    public void getGroupLeader() throws IOException, ClassNotFoundException {
+        System.out.println("Введите имя группы: ");
+        Scanner scanner = new Scanner(System.in);
+        String nameG = scanner.next();
+        int c = 0;
+        Student leader;
+        ArrayList<Group> groups = getGroups();
+        if (groups != null) {
+            for (Group group :
+                    groups) {
+                if (group.getName().equals(nameG)) {
+                    leader = group.getLeader();
+                    System.out.println(leader.toString());
+                    c++;
+                }
+            }
+        } else {
+            System.out.println("ОШИБКА!!! Записи о группах отсутствуют!");
+            menu();
+        }
+        if (c != 1) {
+            System.out.println("Группа не найдена");
+        }
+    }
+
+    public void getGroupInf() throws IOException, ClassNotFoundException {
+        ArrayList<Group> groups = getGroups();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите имя группы");
+        String name = scanner.next();
+        for (Group group :
+                groups) {
+            if (group.getName().equals(name)) {
+                System.out.println(group.toString());
+            }
+        }
+    }
+
+    public void setGroupName() throws IOException, ClassNotFoundException {
+        ArrayList<Group> groups = getGroups();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите имя группы");
+        String name = scanner.next();
+        System.out.println("Введите новое имя группы");
+        String newName = scanner.next();
+        for (Group group :
+                groups) {
+            if (group.getName().equals(name)) {
+                group.setName(newName);
+                System.out.println("Имя изменено");
+            }
+        }
+        writeGroup(groups);
+    }
+
+    public void setLeader() throws IOException, ClassNotFoundException {
+        ArrayList<Group> groups = getGroups();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите имя группы");
+        String name = scanner.next();
+        System.out.println("Введите новые данные старосты:");
+        Student leader = getStudentForWtite();
+        for (Group group :
+                groups) {
+            if (group.getName().equals(name)) {
+                group.setLeader(leader);
+                System.out.println("Новый лидер установлен");
+            }
+        }
+        writeGroup(groups);
+    }
+
+    public void getGroupsName() {
+        try {
+            ArrayList<Group> groups = getGroups();
+            for (Group group :
+                    groups) {
+                System.out.print("" + group.getName() + " ");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void getAllGroupsInf() {
+        try {
+            int i = 1;
+            ArrayList<Group> groups = getGroups();
+            for (Group group :
+                    groups) {
+                System.out.println("" + i + " " + group.toString());
+                i++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getStudentNum() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Введите имя группы");
+        String groupName = scanner.next();
+        Group group = findGroup(groupName);
+        System.out.println("Количесто студентов в группе: " + group.getStudentNum());
+    }
+
+    public void transferStudent() {
+        try {
+            ArrayList<Student> students = new ArrayList<>();
+            ArrayList<Group> groups = getGroups();
+            for (Group group : groups
+                    ) {
+                students.addAll(group.getStudents());
+            }
+            ControllerStudent controllerStudent = new ControllerStudent();
+            controllerStudent.writeStudents(students);
+            System.out.println("Студенты добавлены в бд студентов");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteStudent() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            ArrayList<Group> groups = getGroups();
+            System.out.println("Введите имя группы");
+            int count = 0;
+            int i = 0;
+            int j = 0;
+            String nameG = scanner.next();
+            String name;
+            String sname;
+            ArrayList<Student> students;
+            for (Group group : groups) {
+                if (group.getName().equals(nameG)) {
+                    count++;
+                    students = group.getStudents();
+                    System.out.println("Введите имя студента");
+                    name = scanner.next();
+                    System.out.println("Введите фамилию студента");
+                    sname = scanner.next();
+                    for (Student student : students) {
+                        if (student.getName().equals(name) && student.getSname().equals(sname)) {
+                            students.remove(i);
+                            group.setStudents(students);
+                            groups.set(j, group);
+                            writeGroup(groups);
+                            System.out.println("Студент удален");
+                            break;
+                        }
+                    }
+                    i++;
+                }
+                j++;
+            }
+            if (count == 0) System.out.println("Неверное имя! Группа не найдена!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     //основное меню
@@ -193,40 +414,57 @@ private Group addStudent(Group group){
                 "\n5 - если хотите изменить имя группы" +
                 "\n6 - если хотите изменить старосту группы" +
                 "\n7 - если хотите добавить новую группу" +
-                "\n8 - для выхода из программы");
+                "\n8 - если хотите получить все названия групп" +
+                "\n9 - если хотите получить полную информацию о всех группах" +
+                "\n10 - если хотите получить количество студентов в группе" +
+                "\n11 - если хотите добавить сех студентов из групп в файл со списком студентов" +
+                "\n12 - если хотите удалить студента из группы" +
+                "\n13 - для выхода из программы");
         cases = scanner.nextInt();
         switch (cases) {
             case 1:
                 getGroupStudents();
-                ois.close();
-                fis.close();
                 break;
             case 2:
                 System.out.println("Введите сколько студентов вы хотите добавить:\n");
                 count = scanner.nextInt();
                 while (count != 0) {
-
+                    addStudent();
                     count--;
                 }
-                oos.close();
-                fos.close();
                 break;
             case 3:
-
+                getGroupLeader();
                 break;
             case 4:
-
+                getGroupInf();
                 break;
             case 5:
+                setGroupName();
+                break;
             case 6:
-
+                setLeader();
+                break;
             case 7:
                 addGroup();
-                oos.close();
-                fos.close();
                 break;
             case 8:
-            System.exit(0);
+                getGroupsName();
+                break;
+            case 9:
+                getAllGroupsInf();
+                break;
+            case 10:
+                getStudentNum();
+                break;
+            case 11:
+                transferStudent();
+                break;
+            case 12:
+                deleteStudent();
+                break;
+            case 13:
+                System.exit(0);
             default:
                 System.out.println("Число задано неверно");
                 menu();
